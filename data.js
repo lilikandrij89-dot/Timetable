@@ -30,8 +30,8 @@ const timetableData = {
           isVD: true,
           type: "Практика",
           choices: [
-            { title: "Крит. мислення", teacher: "Мудряк Д.Л.", room: "к.19 а. 307" },
-            { title: "Переговори", teacher: "Стахова / Єремія", room: "к.19 а. 206" }
+              { title: "ОНД", teacher: "Корбутяк А.Г.", room: "к.19 а. 201" },
+            { title: "Крит. мислення", teacher: "Мудряк Д.Л.", room: "к.19 а. 307" }
           ]
         },
         { num: 4, name: "Фізичне виховання", teacher: "Кафедра фіз. виховання", room: "Спортзал", type: "Спорт" }
