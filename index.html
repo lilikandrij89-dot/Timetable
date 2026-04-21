@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>172-2 РОЗКЛАД</title>
+    <title>172-2 Розклад
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
@@ -45,7 +45,7 @@
             flex-shrink: 0;
         }
 
-        h1 { font-size: 26px; font-weight: 900; letter-spacing: -1px; }
+        h1 { font-size: 26px; font-weight: 900; }
 
         .week-badge {
             padding: 5px 12px;
@@ -59,12 +59,13 @@
 
         #schedule-list {
             flex: 1;
-            overflow-y: auto; /* ВКЛЮЧАЕМ СКРОЛЛ */
-            padding-bottom: 90px;
+            overflow-y: auto; /* ВКЛЮЧЕН СКРОЛЛ */
+            padding-bottom: 100px;
             -webkit-overflow-scrolling: touch;
         }
 
-        /* Карточка пары */
+        #schedule-list::-webkit-scrollbar { width: 0; }
+
         .para-card {
             background: var(--card);
             border-radius: 20px;
@@ -78,7 +79,6 @@
         .para-type { font-size: 10px; background: rgba(255, 255, 255, 0.08); padding: 2px 6px; border-radius: 4px; color: #aaa; }
         .para-name { font-size: 18px; font-weight: 700; margin-bottom: 12px; }
 
-        /* Стили для ВД */
         .vd-item {
             background: rgba(255, 255, 255, 0.03);
             margin-top: 8px;
@@ -86,8 +86,8 @@
             border-radius: 10px;
             border-left: 2px solid var(--neon);
         }
-        .vd-title { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 4px; }
-        .vd-info { font-size: 12px; color: var(--text-dim); }
+        .vd-title { font-size: 14px; font-weight: 700; color: #fff; }
+        .vd-info { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
 
         .para-details {
             display: grid;
@@ -100,23 +100,22 @@
         .detail-item strong { display: block; font-size: 10px; color: var(--text-dim); text-transform: uppercase; }
         .detail-item span { font-size: 13px; }
 
-        /* Навигация */
         .nav-bar {
             position: fixed;
-            bottom: 15px;
+            bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            width: calc(100% - 30px);
-            background: rgba(18, 18, 18, 0.96);
-            backdrop-filter: blur(10px);
+            width: calc(100% - 40px);
+            background: rgba(18, 18, 18, 0.95);
+            backdrop-filter: blur(15px);
             border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 22px;
+            border-radius: 24px;
             display: flex;
             padding: 5px;
             z-index: 100;
         }
 
-        .nav-item { flex: 1; padding: 12px 0; text-align: center; color: #444; font-size: 12px; font-weight: 800; border-radius: 16px; }
+        .nav-item { flex: 1; padding: 12px 0; text-align: center; color: #444; font-size: 12px; font-weight: 800; border-radius: 18px; }
         .nav-item.active { color: var(--neon); background: rgba(197, 248, 42, 0.1); }
     </style>
 </head>
@@ -143,12 +142,12 @@
         tg.expand();
 
         function getAcademicWeek() {
-            const now = new Date(); // 21.04.2026
-            const startOfYear = new Date(now.getFullYear(), 0, 1);
-            const days = Math.floor((now - startOfYear) / (24 * 60 * 60 * 1000));
-            const weekNum = Math.ceil((days + startOfYear.getDay() + 1) / 7);
-            // Инвертируем, чтобы 21 апреля была 2-я неделя
-            return (weekNum % 2 !== 0) ? 2 : 1; 
+            const now = new Date(); // 2026-04-21
+            const start = new Date(now.getFullYear(), 0, 1);
+            const days = Math.floor((now - start) / 86400000);
+            const weekNum = Math.ceil((days + start.getDay() + 1) / 7);
+            // 17-я неделя года в 2026 году должна быть 2-й учебной
+            return (weekNum % 2 === 0) ? 1 : 2; 
         }
 
         const currentWeek = getAcademicWeek();
@@ -156,7 +155,7 @@
 
         function renderSchedule(dayId) {
             const day = timetableData[dayId];
-            document.getElementById('day-name').innerText = day.name.toUpperCase();
+            document.getElementById('day-name').innerText = day.name;
             const list = document.getElementById('schedule-list');
             list.innerHTML = '';
 
@@ -168,11 +167,10 @@
                     <div class="para-card">
                         <div class="para-header">
                             <span class="para-num">ПАРА №${l.num}</span>
-                            <span class="para-type">${lesson.type || 'Заняття'}</span>
+                            <span class="para-type">${lesson.type}</span>
                         </div>
                         <div class="para-name">${lesson.name}</div>`;
 
-                // Если это ВД — выводим список вариантов
                 if (lesson.isVD) {
                     lesson.choices.forEach(c => {
                         html += `
