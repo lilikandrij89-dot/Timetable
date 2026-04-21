@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>172-2 Cyber Schedule</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --bg: #050505;
+            --card: #121212;
+            --neon: #c5f82a;
+            --text: #ffffff;
+            --text-dim: #888;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        #app {
+            flex: 1;
+            width: 100%;
+            max-width: 450px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-shrink: 0;
+        }
+
+        h1 { font-size: 26px; font-weight: 900; letter-spacing: -1px; }
+
+        .week-badge {
+            padding: 5px 12px;
+            background: rgba(197, 248, 42, 0.1);
+            border: 1px solid var(--neon);
+            border-radius: 12px;
+            color: var(--neon);
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        #schedule-list {
+            flex: 1;
+            overflow-y: auto; /* ВКЛЮЧАЕМ СКРОЛЛ */
+            padding-bottom: 90px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Карточка пары */
+        .para-card {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .para-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .para-num { color: var(--neon); font-size: 12px; font-weight: 800; }
+        .para-type { font-size: 10px; background: rgba(255, 255, 255, 0.08); padding: 2px 6px; border-radius: 4px; color: #aaa; }
+        .para-name { font-size: 18px; font-weight: 700; margin-bottom: 12px; }
+
+        /* Стили для ВД */
+        .vd-item {
+            background: rgba(255, 255, 255, 0.03);
+            margin-top: 8px;
+            padding: 10px;
+            border-radius: 10px;
+            border-left: 2px solid var(--neon);
+        }
+        .vd-title { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+        .vd-info { font-size: 12px; color: var(--text-dim); }
+
+        .para-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 12px;
+        }
+
+        .detail-item strong { display: block; font-size: 10px; color: var(--text-dim); text-transform: uppercase; }
+        .detail-item span { font-size: 13px; }
+
+        /* Навигация */
+        .nav-bar {
+            position: fixed;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 30px);
+            background: rgba(18, 18, 18, 0.96);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 22px;
+            display: flex;
+            padding: 5px;
+            z-index: 100;
+        }
+
+        .nav-item { flex: 1; padding: 12px 0; text-align: center; color: #444; font-size: 12px; font-weight: 800; border-radius: 16px; }
+        .nav-item.active { color: var(--neon); background: rgba(197, 248, 42, 0.1); }
+    </style>
+</head>
+<body>
+    <main id="app">
+        <header>
+            <h1 id="day-name">---</h1>
+            <div class="week-badge"><span id="week-text">... ТИЖДЕНЬ</span></div>
+        </header>
+        <div id="schedule-list"></div>
+    </main>
+
+    <nav class="nav-bar">
+        <div class="nav-item" onclick="changeDay(1, this)">ПН</div>
+        <div class="nav-item" onclick="changeDay(2, this)">ВТ</div>
+        <div class="nav-item" onclick="changeDay(3, this)">СР</div>
+        <div class="nav-item" onclick="changeDay(4, this)">ЧТ</div>
+        <div class="nav-item" onclick="changeDay(5, this)">ПТ</div>
+    </nav>
+
+    <script src="data.js"></script>
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+
+        function getAcademicWeek() {
+            const now = new Date(); // 21.04.2026
+            const startOfYear = new Date(now.getFullYear(), 0, 1);
+            const days = Math.floor((now - startOfYear) / (24 * 60 * 60 * 1000));
+            const weekNum = Math.ceil((days + startOfYear.getDay() + 1) / 7);
+            // Инвертируем, чтобы 21 апреля была 2-я неделя
+            return (weekNum % 2 !== 0) ? 2 : 1; 
+        }
+
+        const currentWeek = getAcademicWeek();
+        document.getElementById('week-text').innerText = `${currentWeek}-Й ТИЖДЕНЬ`;
+
+        function renderSchedule(dayId) {
+            const day = timetableData[dayId];
+            document.getElementById('day-name').innerText = day.name.toUpperCase();
+            const list = document.getElementById('schedule-list');
+            list.innerHTML = '';
+
+            day.lessons.forEach(l => {
+                let lesson = (l.week1 || l.week2) ? (currentWeek === 1 ? l.week1 : l.week2) : l;
+                if (!lesson || lesson.name === "НЕМА") return;
+
+                let html = `
+                    <div class="para-card">
+                        <div class="para-header">
+                            <span class="para-num">ПАРА №${l.num}</span>
+                            <span class="para-type">${lesson.type || 'Заняття'}</span>
+                        </div>
+                        <div class="para-name">${lesson.name}</div>`;
+
+                // Если это ВД — выводим список вариантов
+                if (lesson.isVD) {
+                    lesson.choices.forEach(c => {
+                        html += `
+                            <div class="vd-item">
+                                <div class="vd-title">${c.title}</div>
+                                <div class="vd-info">${c.teacher} • ${c.room}</div>
+                            </div>`;
+                    });
+                } else {
+                    html += `
+                        <div class="para-details">
+                            <div class="detail-item"><strong>Викладач</strong><span>${lesson.teacher || '---'}</span></div>
+                            <div class="detail-item"><strong>Аудиторія</strong><span>${lesson.room || '---'}</span></div>
+                        </div>`;
+                }
+
+                html += `</div>`;
+                list.innerHTML += html;
+            });
+            list.scrollTop = 0;
+        }
+
+        function changeDay(id, el) {
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            el.classList.add('active');
+            renderSchedule(id);
+            if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+        }
+
+        let today = new Date().getDay();
+        if (today === 0 || today === 6) today = 1;
+        changeDay(today, document.querySelectorAll('.nav-item')[today-1]);
+    </script>
+</body>
+</html>
