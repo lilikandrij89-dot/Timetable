@@ -42,7 +42,7 @@ const timetableData = {
         ]
     },
     4: { 
-        name: "ЧЕТВЕР", 
+        name: "ЧЕТВЕРГ", 
         lessons: [
             { num: 3, name: "Банківська система", teacher: "Федишин М.П.", room: "к.19 а. 301", type: "Практика" },
             { num: 4, name: "Іноземна мова за ПС", teacher: "Рубанець Т.В.", room: "к.19 а. 201", type: "Практика" }
