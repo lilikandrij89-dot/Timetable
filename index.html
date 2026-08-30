@@ -3,22 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>172-2 Розклад</title>
+    <title>272-2 Розклад</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #090b10;
-            --surface: rgba(22, 27, 34, 0.75);
-            --surface-subtle: rgba(255, 255, 255, 0.03);
-            --neon: #c5f82a;
-            --neon-glow: rgba(197, 248, 42, 0.25);
-            --text-main: #f0f6fc;
-            --text-muted: #8b949e;
-            --border: rgba(255, 255, 255, 0.08);
-            --border-highlight: rgba(197, 248, 42, 0.3);
+            --bg: #ece9e2;
+            --surface: #f9f8f5;
+            --surface-card: #ffffff;
+            --surface-subtle: #f0eee9;
+            --accent: #c25e2e;
+            --accent-soft: rgba(194, 94, 46, 0.12);
+            --text-main: #232220;
+            --text-muted: #7d7a74;
+            --border: #dfdbd2;
+            --border-card: #e8e5dc;
+            --shadow-card: 0 4px 16px rgba(45, 41, 38, 0.04), 0 1px 3px rgba(45, 41, 38, 0.03);
+            --shadow-nav: 0 12px 30px rgba(45, 41, 38, 0.12);
         }
 
         * {
@@ -35,7 +38,7 @@
 
         body {
             font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
-            background: radial-gradient(circle at top, #141b24 0%, var(--bg) 60%);
+            background: radial-gradient(circle at 100% 0%, #f4f1ea 0%, var(--bg) 100%);
             background-attachment: fixed;
             color: var(--text-main);
             overflow-x: hidden;
@@ -47,7 +50,7 @@
             width: 100%;
             max-width: 480px;
             margin: 0 auto;
-            padding: 20px 18px calc(100px + env(safe-area-inset-bottom, 0px));
+            padding: 24px 18px calc(105px + env(safe-area-inset-bottom, 0px));
             display: flex;
             flex-direction: column;
         }
@@ -61,12 +64,10 @@
         }
 
         h1 {
-            font-size: 28px;
+            font-size: 26px;
             font-weight: 800;
-            letter-spacing: -0.5px;
-            background: linear-gradient(180deg, #fff 0%, #cbd5e1 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.6px;
+            color: var(--text-main);
         }
 
         .week-badge {
@@ -74,14 +75,14 @@
             align-items: center;
             gap: 6px;
             padding: 6px 14px;
-            background: rgba(197, 248, 42, 0.08);
-            border: 1px solid var(--border-highlight);
-            box-shadow: 0 0 16px var(--neon-glow);
+            background: var(--surface);
+            border: 1px solid var(--border);
             border-radius: 999px;
-            color: var(--neon);
+            color: var(--accent);
             font-size: 11px;
             font-weight: 800;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.4px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
             text-transform: uppercase;
         }
 
@@ -90,8 +91,7 @@
             width: 6px;
             height: 6px;
             border-radius: 50%;
-            background: var(--neon);
-            box-shadow: 0 0 8px var(--neon);
+            background: var(--accent);
         }
 
         #schedule-list {
@@ -101,13 +101,11 @@
         }
 
         .para-card {
-            background: var(--surface);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-radius: 22px;
+            background: var(--surface-card);
+            border-radius: 20px;
             padding: 20px;
-            border: 1px solid var(--border);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+            border: 1px solid var(--border-card);
+            box-shadow: var(--shadow-card);
             animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) backwards;
         }
 
@@ -120,7 +118,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
 
         .para-meta-left {
@@ -130,37 +128,38 @@
         }
 
         .para-num {
-            color: var(--neon);
+            color: var(--accent);
             font-size: 11px;
             font-weight: 800;
-            letter-spacing: 0.8px;
+            letter-spacing: 0.6px;
         }
 
         .para-time {
             font-size: 11px;
             font-weight: 700;
-            color: #e2e8f0;
-            background: rgba(255, 255, 255, 0.08);
-            padding: 2px 7px;
+            color: #55524c;
+            background: var(--surface-subtle);
+            padding: 3px 8px;
             border-radius: 6px;
-            letter-spacing: 0.3px;
+            letter-spacing: 0.2px;
         }
 
         .para-type {
             font-size: 10px;
-            font-weight: 700;
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            font-weight: 800;
             padding: 3px 8px;
             border-radius: 6px;
-            color: var(--text-muted);
             text-transform: uppercase;
+            letter-spacing: 0.4px;
+            background: var(--surface-subtle);
+            color: #55524c;
+            border: 1px solid var(--border);
         }
 
         .para-name {
-            font-size: 18px;
+            font-size: 17px;
             font-weight: 700;
-            line-height: 1.35;
+            line-height: 1.4;
             margin-bottom: 16px;
             color: var(--text-main);
         }
@@ -170,18 +169,18 @@
             margin-top: 10px;
             padding: 12px;
             border-radius: 12px;
-            border-left: 3px solid var(--neon);
-            border-top: 1px solid rgba(255, 255, 255, 0.02);
+            border-left: 3px solid var(--accent);
         }
 
         .vd-title {
             font-size: 14px;
             font-weight: 700;
-            color: #fff;
+            color: var(--text-main);
         }
 
         .vd-info {
             font-size: 12px;
+            font-weight: 600;
             color: var(--text-muted);
             margin-top: 3px;
         }
@@ -190,7 +189,7 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
-            border-top: 1px solid var(--border);
+            border-top: 1px solid var(--surface-subtle);
             padding-top: 14px;
         }
 
@@ -200,13 +199,14 @@
             color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            font-weight: 700;
             margin-bottom: 3px;
         }
 
         .detail-item span {
             font-size: 13px;
             font-weight: 600;
-            color: #e2e8f0;
+            color: #42403b;
         }
 
         .nav-bar {
@@ -216,15 +216,15 @@
             transform: translateX(-50%);
             width: calc(100% - 32px);
             max-width: 448px;
-            background: rgba(15, 20, 26, 0.88);
+            background: rgba(249, 248, 245, 0.88);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--border);
             border-radius: 20px;
             display: flex;
-            padding: 6px;
+            padding: 5px;
             gap: 4px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+            box-shadow: var(--shadow-nav);
             z-index: 1000;
         }
 
@@ -235,15 +235,15 @@
             color: var(--text-muted);
             font-size: 13px;
             font-weight: 700;
-            border-radius: 14px;
+            border-radius: 15px;
             cursor: pointer;
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .nav-item.active {
-            color: #090b10;
-            background: var(--neon);
-            box-shadow: 0 0 16px var(--neon-glow);
+            color: #ffffff;
+            background: var(--accent);
+            box-shadow: 0 4px 14px rgba(194, 94, 46, 0.35);
         }
     </style>
 </head>
@@ -269,11 +269,10 @@
         const tg = window.Telegram?.WebApp;
         if (tg) {
             tg.expand();
-            tg.setHeaderColor?.('#090b10');
-            tg.setBackgroundColor?.('#090b10');
+            tg.setHeaderColor?.('#ece9e2');
+            tg.setBackgroundColor?.('#ece9e2');
         }
 
-        // Розклад дзвінків для кожної пари
         const lessonTimes = {
             1: "08:30 – 09:50",
             2: "10:00 – 11:20",
