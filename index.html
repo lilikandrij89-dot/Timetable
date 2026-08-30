@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>272-2 Розклад</title>
+    <title>172-2 Розклад</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -123,11 +123,27 @@
             margin-bottom: 10px;
         }
 
+        .para-meta-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
         .para-num {
             color: var(--neon);
             font-size: 11px;
             font-weight: 800;
             letter-spacing: 0.8px;
+        }
+
+        .para-time {
+            font-size: 11px;
+            font-weight: 700;
+            color: #e2e8f0;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 2px 7px;
+            border-radius: 6px;
+            letter-spacing: 0.3px;
         }
 
         .para-type {
@@ -257,6 +273,17 @@
             tg.setBackgroundColor?.('#090b10');
         }
 
+        // Розклад дзвінків для кожної пари
+        const lessonTimes = {
+            1: "08:30 – 09:50",
+            2: "10:00 – 11:20",
+            3: "11:40 – 13:00",
+            4: "13:10 – 14:30",
+            5: "14:40 – 16:00",
+            6: "16:10 – 17:30",
+            7: "17:40 – 19:00"
+        };
+
         function getAcademicWeek() {
             const startDate = new Date(2026, 7, 31); 
             const now = new Date();
@@ -285,10 +312,15 @@
                 let lesson = (l.week1 || l.week2) ? (currentWeek === 1 ? l.week1 : l.week2) : l;
                 if (!lesson || lesson.name === "НЕМА") return;
 
+                const timeStr = lessonTimes[l.num] || '';
+
                 let html = `
                     <div class="para-card" style="animation-delay: ${index * 0.04}s">
                         <div class="para-header">
-                            <span class="para-num">ПАРА №${l.num}</span>
+                            <div class="para-meta-left">
+                                <span class="para-num">№${l.num}</span>
+                                ${timeStr ? `<span class="para-time">${timeStr}</span>` : ''}
+                            </div>
                             <span class="para-type">${lesson.type || 'Пара'}</span>
                         </div>
                         <div class="para-name">${lesson.name}</div>`;
