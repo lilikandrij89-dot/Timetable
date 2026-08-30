@@ -5,22 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>172-2 Розклад</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #050505;
-            --card: #121212;
+            --bg: #090b10;
+            --surface: rgba(22, 27, 34, 0.75);
+            --surface-subtle: rgba(255, 255, 255, 0.03);
             --neon: #c5f82a;
-            --text: #ffffff;
-            --text-dim: #888;
+            --neon-glow: rgba(197, 248, 42, 0.25);
+            --text-main: #f0f6fc;
+            --text-muted: #8b949e;
+            --border: rgba(255, 255, 255, 0.08);
+            --border-highlight: rgba(197, 248, 42, 0.3);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
 
         body {
-            font-family: 'Inter', -apple-system, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            height: 100vh;
+            font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+            background: radial-gradient(circle at top, #141b24 0%, var(--bg) 60%);
+            color: var(--text-main);
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -29,9 +41,9 @@
         #app {
             flex: 1;
             width: 100%;
-            max-width: 450px;
+            max-width: 480px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 20px 18px 0;
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -41,82 +53,185 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 22px;
             flex-shrink: 0;
         }
 
-        h1 { font-size: 26px; font-weight: 900; }
+        h1 {
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(180deg, #fff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
 
         .week-badge {
-            padding: 5px 12px;
-            background: rgba(197, 248, 42, 0.1);
-            border: 1px solid var(--neon);
-            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            background: rgba(197, 248, 42, 0.08);
+            border: 1px solid var(--border-highlight);
+            box-shadow: 0 0 16px var(--neon-glow);
+            border-radius: 999px;
             color: var(--neon);
             font-size: 11px;
             font-weight: 800;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .week-badge::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--neon);
+            box-shadow: 0 0 8px var(--neon);
         }
 
         #schedule-list {
             flex: 1;
-            overflow-y: auto; /* ВКЛЮЧЕН СКРОЛЛ */
-            padding-bottom: 100px;
+            overflow-y: auto;
+            padding-bottom: 110px;
             -webkit-overflow-scrolling: touch;
         }
 
-        #schedule-list::-webkit-scrollbar { width: 0; }
+        #schedule-list::-webkit-scrollbar {
+            width: 0;
+        }
 
         .para-card {
-            background: var(--card);
-            border-radius: 20px;
+            background: var(--surface);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 22px;
             padding: 20px;
-            margin-bottom: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.03);
+            margin-bottom: 14px;
+            border: 1px solid var(--border);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+            animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) backwards;
         }
 
-        .para-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
-        .para-num { color: var(--neon); font-size: 12px; font-weight: 800; }
-        .para-type { font-size: 10px; background: rgba(255, 255, 255, 0.08); padding: 2px 6px; border-radius: 4px; color: #aaa; }
-        .para-name { font-size: 18px; font-weight: 700; margin-bottom: 12px; }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .para-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .para-num {
+            color: var(--neon);
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.8px;
+        }
+
+        .para-type {
+            font-size: 10px;
+            font-weight: 700;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 3px 8px;
+            border-radius: 6px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .para-name {
+            font-size: 18px;
+            font-weight: 700;
+            line-height: 1.35;
+            margin-bottom: 16px;
+            color: var(--text-main);
+        }
 
         .vd-item {
-            background: rgba(255, 255, 255, 0.03);
-            margin-top: 8px;
-            padding: 10px;
-            border-radius: 10px;
-            border-left: 2px solid var(--neon);
+            background: var(--surface-subtle);
+            margin-top: 10px;
+            padding: 12px;
+            border-radius: 12px;
+            border-left: 3px solid var(--neon);
+            border-top: 1px solid rgba(255, 255, 255, 0.02);
         }
-        .vd-title { font-size: 14px; font-weight: 700; color: #fff; }
-        .vd-info { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+
+        .vd-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .vd-info {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 3px;
+        }
 
         .para-details {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            padding-top: 12px;
+            gap: 12px;
+            border-top: 1px solid var(--border);
+            padding-top: 14px;
         }
 
-        .detail-item strong { display: block; font-size: 10px; color: var(--text-dim); text-transform: uppercase; }
-        .detail-item span { font-size: 13px; }
+        .detail-item strong {
+            display: block;
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 3px;
+        }
+
+        .detail-item span {
+            font-size: 13px;
+            font-weight: 600;
+            color: #e2e8f0;
+        }
 
         .nav-bar {
             position: fixed;
-            bottom: 20px;
+            bottom: calc(16px + env(safe-area-inset-bottom, 0px));
             left: 50%;
             transform: translateX(-50%);
-            width: calc(100% - 40px);
-            background: rgba(18, 18, 18, 0.95);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 24px;
+            width: calc(100% - 32px);
+            max-width: 448px;
+            background: rgba(15, 20, 26, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
             display: flex;
-            padding: 5px;
+            padding: 6px;
+            gap: 4px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
             z-index: 100;
         }
 
-        .nav-item { flex: 1; padding: 12px 0; text-align: center; color: #444; font-size: 12px; font-weight: 800; border-radius: 18px; }
-        .nav-item.active { color: var(--neon); background: rgba(197, 248, 42, 0.1); }
+        .nav-item {
+            flex: 1;
+            padding: 10px 0;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 700;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav-item.active {
+            color: #090b10;
+            background: var(--neon);
+            box-shadow: 0 0 16px var(--neon-glow);
+        }
     </style>
 </head>
 <body>
@@ -139,15 +254,25 @@
     <script src="data.js"></script>
     <script>
         const tg = window.Telegram.WebApp;
-        tg.expand();
+        if (tg) {
+            tg.expand();
+            tg.setHeaderColor?.('#090b10');
+            tg.setBackgroundColor?.('#090b10');
+        }
 
         function getAcademicWeek() {
-            const now = new Date(); // 2026-04-21
-            const start = new Date(now.getFullYear(), 0, 1);
-            const days = Math.floor((now - start) / 86400000);
-            const weekNum = Math.ceil((days + start.getDay() + 1) / 7);
-            // 17-я неделя года в 2026 году должна быть 2-й учебной
-            return (weekNum % 2 === 0) ? 1 : 2; 
+            // Точка відліку: 31 серпня 2026 року (Понеділок = 1-й тиждень)
+            const startDate = new Date(2026, 7, 31); 
+            const now = new Date();
+
+            const diffTime = now.getTime() - startDate.getTime();
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            
+            // Якщо дата передує старту, тримаємо за замовчуванням 1
+            if (diffDays < 0) return 1;
+
+            const passedWeeks = Math.floor(diffDays / 7);
+            return (passedWeeks % 2 === 0) ? 1 : 2;
         }
 
         const currentWeek = getAcademicWeek();
@@ -155,19 +280,21 @@
 
         function renderSchedule(dayId) {
             const day = timetableData[dayId];
+            if (!day) return;
+
             document.getElementById('day-name').innerText = day.name;
             const list = document.getElementById('schedule-list');
             list.innerHTML = '';
 
-            day.lessons.forEach(l => {
+            day.lessons.forEach((l, index) => {
                 let lesson = (l.week1 || l.week2) ? (currentWeek === 1 ? l.week1 : l.week2) : l;
                 if (!lesson || lesson.name === "НЕМА") return;
 
                 let html = `
-                    <div class="para-card">
+                    <div class="para-card" style="animation-delay: ${index * 0.05}s">
                         <div class="para-header">
                             <span class="para-num">ПАРА №${l.num}</span>
-                            <span class="para-type">${lesson.type}</span>
+                            <span class="para-type">${lesson.type || 'Пара'}</span>
                         </div>
                         <div class="para-name">${lesson.name}</div>`;
 
@@ -176,7 +303,7 @@
                         html += `
                             <div class="vd-item">
                                 <div class="vd-title">${c.title}</div>
-                                <div class="vd-info">${c.teacher} • ${c.room}</div>
+                                <div class="vd-info">${c.teacher || '---'} • ${c.room || '---'}</div>
                             </div>`;
                     });
                 } else {
@@ -197,12 +324,15 @@
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
             el.classList.add('active');
             renderSchedule(id);
-            if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+            if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
 
         let today = new Date().getDay();
         if (today === 0 || today === 6) today = 1;
-        changeDay(today, document.querySelectorAll('.nav-item')[today-1]);
+        const navItems = document.querySelectorAll('.nav-item');
+        if (navItems[today - 1]) {
+            changeDay(today, navItems[today - 1]);
+        }
     </script>
 </body>
 </html>
