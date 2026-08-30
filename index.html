@@ -28,25 +28,28 @@
             -webkit-tap-highlight-color: transparent;
         }
 
+        html, body {
+            min-height: 100%;
+            background: var(--bg);
+        }
+
         body {
             font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
             background: radial-gradient(circle at top, #141b24 0%, var(--bg) 60%);
+            background-attachment: fixed;
             color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
+            overflow-x: hidden;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         #app {
-            flex: 1;
             width: 100%;
             max-width: 480px;
             margin: 0 auto;
-            padding: 20px 18px 0;
+            padding: 20px 18px calc(100px + env(safe-area-inset-bottom, 0px));
             display: flex;
             flex-direction: column;
-            overflow: hidden;
         }
 
         header {
@@ -92,14 +95,9 @@
         }
 
         #schedule-list {
-            flex: 1;
-            overflow-y: auto;
-            padding-bottom: 110px;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        #schedule-list::-webkit-scrollbar {
-            width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
         }
 
         .para-card {
@@ -108,7 +106,6 @@
             -webkit-backdrop-filter: blur(16px);
             border-radius: 22px;
             padding: 20px;
-            margin-bottom: 14px;
             border: 1px solid var(--border);
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
             animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) backwards;
@@ -203,7 +200,7 @@
             transform: translateX(-50%);
             width: calc(100% - 32px);
             max-width: 448px;
-            background: rgba(15, 20, 26, 0.85);
+            background: rgba(15, 20, 26, 0.88);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--border);
@@ -212,7 +209,7 @@
             padding: 6px;
             gap: 4px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-            z-index: 100;
+            z-index: 1000;
         }
 
         .nav-item {
@@ -253,7 +250,7 @@
 
     <script src="data.js"></script>
     <script>
-        const tg = window.Telegram.WebApp;
+        const tg = window.Telegram?.WebApp;
         if (tg) {
             tg.expand();
             tg.setHeaderColor?.('#090b10');
@@ -261,14 +258,12 @@
         }
 
         function getAcademicWeek() {
-            // Точка відліку: 31 серпня 2026 року (Понеділок = 1-й тиждень)
             const startDate = new Date(2026, 7, 31); 
             const now = new Date();
 
             const diffTime = now.getTime() - startDate.getTime();
             const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
             
-            // Якщо дата передує старту, тримаємо за замовчуванням 1
             if (diffDays < 0) return 1;
 
             const passedWeeks = Math.floor(diffDays / 7);
@@ -291,7 +286,7 @@
                 if (!lesson || lesson.name === "НЕМА") return;
 
                 let html = `
-                    <div class="para-card" style="animation-delay: ${index * 0.05}s">
+                    <div class="para-card" style="animation-delay: ${index * 0.04}s">
                         <div class="para-header">
                             <span class="para-num">ПАРА №${l.num}</span>
                             <span class="para-type">${lesson.type || 'Пара'}</span>
@@ -317,14 +312,14 @@
                 html += `</div>`;
                 list.innerHTML += html;
             });
-            list.scrollTop = 0;
+            window.scrollTo({ top: 0, behavior: 'instant' });
         }
 
         function changeDay(id, el) {
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
             el.classList.add('active');
             renderSchedule(id);
-            if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+            if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
 
         let today = new Date().getDay();
